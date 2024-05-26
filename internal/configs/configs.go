@@ -6,18 +6,20 @@ import (
 )
 
 const (
-	envTimeoutSeconds                 = "TIMEOUT_SECONDS"
-	envLogLvl = "LOG_LVL"
+	envTimeoutSeconds = "TIMEOUT_SECONDS"
+	envLogLvl         = "LOG_LVL"
+	envEnvironment = "ENV"
 
 	defaultTimeoutSeconds = 30
-	defaultLogLvl = "INFO"
+	defaultLogLvl         = "INFO"
+	defaultEnv = "test"
 )
 
 type (
 	Cfg struct {
-		Env string
-		LoggerCfg *logger.LoggerCfg
-		DBCfg string
+		Env        string
+		LoggerCfg  *logger.LoggerCfg
+		DBCfg      string
 		ServiceCfg *ServiceCfg
 	}
 
@@ -39,5 +41,17 @@ func NewLoggerCfg(v *viper.Viper) *logger.LoggerCfg {
 
 	return &logger.LoggerCfg{
 		Lvl: v.GetString(envLogLvl),
+	}
+}
+
+func NewCfg() *Cfg {
+	v := viper.New()
+	v.SetDefault(envEnvironment, defaultEnv)
+
+	return &Cfg{
+		Env: v.GetString(envEnvironment),
+		LoggerCfg: NewLoggerCfg(v),
+		DBCfg: "",
+		ServiceCfg: NewServiceCfg(v),
 	}
 }

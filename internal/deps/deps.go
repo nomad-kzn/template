@@ -6,13 +6,13 @@ import (
 )
 
 type Deps struct {
-	Logger logger.Logger
+	Logger  logger.Logger
 	Configs configs.ServiceCfg
 }
 
 func NewDeps(l logger.Logger, cfg configs.ServiceCfg) *Deps {
 	return &Deps{
-		Logger: l,
+		Logger:  l,
 		Configs: cfg,
 	}
 }

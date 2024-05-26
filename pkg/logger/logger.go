@@ -8,24 +8,24 @@ import (
 
 const (
 	DebugLogLvl = "DEBUG"
-	InfoLogLvl = "INFO"
-	WarnLogLvl = "WARN"
-	ErrLogLvl = "ERROR"
+	InfoLogLvl  = "INFO"
+	WarnLogLvl  = "WARN"
+	ErrLogLvl   = "ERROR"
 )
 
 type (
 	Logger interface {
-	Debug(msg string, args ...any)
-	DebugCtx(ctx context.Context, msg string, args ...any)
+		Debug(msg string, args ...any)
+		DebugCtx(ctx context.Context, msg string, args ...any)
 
-	Info(msg string, args ...any)
-	InfoCtx(ctx context.Context, msg string, args ...any)
+		Info(msg string, args ...any)
+		InfoCtx(ctx context.Context, msg string, args ...any)
 
-	Warn(msg string, args ...any)
-	WarnCtx(ctx context.Context, msg string, args ...any)
+		Warn(msg string, args ...any)
+		WarnCtx(ctx context.Context, msg string, args ...any)
 
-	Error(msg string, args ...any)
-	ErrorCtx(ctx context.Context, msg string, args ...any)
+		Error(msg string, args ...any)
+		ErrorCtx(ctx context.Context, msg string, args ...any)
 	}
 
 	LoggerImpl struct {
@@ -89,7 +89,7 @@ func getLogLvl(logLvl string) slog.Level {
 	case WarnLogLvl:
 		return slog.LevelWarn
 	case DebugLogLvl:
-		return slog.LevelDebug			
+		return slog.LevelDebug
 	default:
 		return slog.LevelInfo
 	}

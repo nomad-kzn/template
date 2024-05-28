@@ -21,6 +21,7 @@ type (
 		LoggerCfg  *logger.LoggerCfg
 		DBCfg      string
 		ServiceCfg *ServiceCfg
+		DatabaseConfig *DatabaseConfig
 	}
 
 	ServiceCfg struct {
@@ -53,5 +54,6 @@ func NewCfg() *Cfg {
 		LoggerCfg: NewLoggerCfg(v),
 		DBCfg: "",
 		ServiceCfg: NewServiceCfg(v),
+		DatabaseConfig: NewDatabaseConfig(v),
 	}
 }

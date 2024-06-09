@@ -14,34 +14,34 @@ import (
 	"github.com/nomad-kzn/template/pkg/logger"
 )
 
-var _ interfaces.Usecase = (*UsecaseImpl)(nil)
+var _ interfaces.Usecase = (*UCImpl)(nil)
 
-type UsecaseImpl struct {
+type UCImpl struct {
 	r   interfaces.Repository
-	s interfaces.Srvc
+	s   interfaces.Srvc
 	cfg configs.ServiceCfg
 	l   logger.Logger
 }
 
-func NewUCImpl(d *deps.Deps, db *sql.DB) (*UsecaseImpl, error) {
+func NewUCImpl(d *deps.Deps, db *sql.DB) (*UCImpl, error) {
 	if d == nil {
 		return nil, fmt.Errorf("usecase init err: deps is nil")
 	}
 
-	srvc, err := srvc.NewSrvcImpl(d)
+	service, err := srvc.NewServiceImpl(d)
 	if err != nil {
 		return nil, err
 	}
 
-	return &UsecaseImpl{
+	return &UCImpl{
 		r:   repository.NewUserRepoImpl(db),
-		s: srvc,
+		s:   service,
 		cfg: d.Configs,
 		l:   d.Logger,
 	}, nil
 }
 
-func (u *UsecaseImpl) GetUser(ctx context.Context, id string) (*models.User, error) {
+func (u *UCImpl) GetUser(ctx context.Context, id string) (*models.User, error) {
 	u.l.Info("it is ok!")
 	result, err := u.r.GetUser(ctx, id)
 	if err != nil {

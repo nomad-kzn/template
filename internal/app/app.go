@@ -1,18 +1,25 @@
 package app
 
 import (
+	"errors"
 	"fmt"
+	"github.com/labstack/echo/v4"
 	"github.com/nomad-kzn/template/internal/configs"
 	"github.com/nomad-kzn/template/internal/deps"
-	"github.com/nomad-kzn/template/internal/interfaces"
+	"github.com/nomad-kzn/template/internal/transport"
 	"github.com/nomad-kzn/template/internal/usecase"
+	"github.com/nomad-kzn/template/pkg/db"
 	"github.com/nomad-kzn/template/pkg/logger"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
 	"context"
 )
 
 type App struct {
-	u interfaces.Usecase
+	e *echo.Echo
 }
 
 func NewApp(cfg *configs.Cfg) (*App, error) {
@@ -23,15 +30,41 @@ func NewApp(cfg *configs.Cfg) (*App, error) {
 	l := logger.NewLoggerImpl(cfg.LoggerCfg)
 	d := deps.NewDeps(l, *cfg.ServiceCfg)
 
-	uc, err := usecase.NewUCImpl(d)
+	database := db.NewPostgresClient(cfg.DatabaseConfig)
+
+	if err := database.Connect(context.Background()); err != nil {
+		l.Error("NewApp init err: failed to connect database", err)
+		return nil, err
+	}
+
+	uc, err := usecase.NewUCImpl(d, database.Database())
 	if err != nil {
 		return nil, err
 	}
 
-	return &App{u: uc}, nil
+	e := echo.New()
+	transport.BindRoutes(uc, *d, e)
+
+	return &App{e: e}, nil
 }
 
-func (a *App) Run(ctx context.Context) error {
-	_, err := a.u.GetUser(ctx, "")
-	return err
+func (a *App) Run() {
+	go func() {
+		if err := a.e.Start(":8080"); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			a.e.Logger.Fatal("shutting down the server")
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+
+	<-quit
+	a.e.Logger.Info("Shutting down the server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := a.e.Shutdown(ctx); err != nil {
+		a.e.Logger.Fatal(err)
+	}
 }

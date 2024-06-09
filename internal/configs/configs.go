@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"github.com/nomad-kzn/template/pkg/db"
 	"github.com/nomad-kzn/template/pkg/logger"
 	"github.com/spf13/viper"
 )
@@ -8,20 +9,20 @@ import (
 const (
 	envTimeoutSeconds = "TIMEOUT_SECONDS"
 	envLogLvl         = "LOG_LVL"
-	envEnvironment = "ENV"
+	envEnvironment    = "ENV"
 
 	defaultTimeoutSeconds = 30
 	defaultLogLvl         = "INFO"
-	defaultEnv = "test"
+	defaultEnv            = "test"
 )
 
 type (
 	Cfg struct {
-		Env        string
-		LoggerCfg  *logger.LoggerCfg
-		DBCfg      string
-		ServiceCfg *ServiceCfg
-		DatabaseConfig *DatabaseConfig
+		Env            string
+		LoggerCfg      *logger.LoggerCfg
+		DBCfg          string
+		ServiceCfg     *ServiceCfg
+		DatabaseConfig *db.DatabaseConfig
 	}
 
 	ServiceCfg struct {
@@ -50,10 +51,10 @@ func NewCfg() *Cfg {
 	v.SetDefault(envEnvironment, defaultEnv)
 
 	return &Cfg{
-		Env: v.GetString(envEnvironment),
-		LoggerCfg: NewLoggerCfg(v),
-		DBCfg: "",
-		ServiceCfg: NewServiceCfg(v),
-		DatabaseConfig: NewDatabaseConfig(v),
+		Env:            v.GetString(envEnvironment),
+		LoggerCfg:      NewLoggerCfg(v),
+		DBCfg:          "",
+		ServiceCfg:     NewServiceCfg(v),
+		DatabaseConfig: db.NewDatabaseConfig(v),
 	}
 }

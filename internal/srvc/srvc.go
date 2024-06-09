@@ -11,24 +11,24 @@ import (
 	"github.com/nomad-kzn/template/pkg/logger"
 )
 
-var _ interfaces.Srvc = (*SrvcImpl)(nil)
+var _ interfaces.Srvc = (*ServiceImpl)(nil)
 
-type SrvcImpl struct {
+type ServiceImpl struct {
 	l   logger.Logger
 	cfg configs.ServiceCfg
 }
 
-func NewSrvcImpl(d *deps.Deps) (*SrvcImpl, error){
+func NewServiceImpl(d *deps.Deps) (*ServiceImpl, error) {
 	if d == nil {
 		return nil, fmt.Errorf("srvc init err: deps is nil")
 	}
 
-	return &SrvcImpl{
+	return &ServiceImpl{
 		cfg: d.Configs,
 		l:   d.Logger,
 	}, nil
 }
 
-func (s *SrvcImpl) GetUsersStats(ctx context.Context) ([]models.UserStat, error) {
+func (s *ServiceImpl) GetUsersStats(ctx context.Context) ([]models.UserStat, error) {
 	return []models.UserStat{}, nil
 }

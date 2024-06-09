@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  example-pg:
+    image: postgres:15-alpine
+    container_name: example
+    environment:
+      POSTGRES_DB: portal
+      POSTGRES_USER: postuser
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_SSLMODE: disable
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
